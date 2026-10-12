@@ -51,7 +51,7 @@ function show(r){
 }
 async function refresh(){
  $('refreshBtn').disabled=true;$('status').textContent='조회 중';$('status').className='status';
- const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),12000);
+ const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),30000);
  try{
   const response=await fetch('/api/capture',{method:'POST',signal:controller.signal,cache:'no-store'});if(!response.ok)throw new Error(`서버 조회/저장 실패 (HTTP ${response.status})`);
   const result=await response.json(),raw=result.raw;validate(raw);
