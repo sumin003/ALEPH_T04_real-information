@@ -114,8 +114,12 @@ async function runCard4Test(){
   // record_id는 합성 signal_id + KST 날짜로 고정한다.
   const ok=rows.map(x=>x.after).join(',')==='1,1,1,2'&&synthetic[0].normalized_value===110&&synthetic[1].normalized_value===120&&synthetic[0].record_id===a.payload.signal_id+'|2026-08-24';
   const before=rows[1].before,after=rows[1].after;
-  output.textContent=`같은 날 재실행 전후 행 수\n재실행 전: ${before}건\n재실행 후: ${after}건`;
- }catch(e){output.textContent='검사 실패: '+e.message;}
+  $('card4Before').textContent=before+'건';
+  $('card4After').textContent=after+'건';
+  $('card4Badge').textContent=ok?'✓ 행 수 일치':'⚠ 검사 불일치';
+  $('card4Badge').className='match-badge '+(ok?'success':'fail');
+  $('card4Note').textContent=ok?'같은 날 재실행해도 행 수가 증가하지 않습니다.':'합성 날짜 검사 조건을 확인하세요.';
+ }catch(e){$('card4Badge').textContent='⚠ 검사 실패';$('card4Badge').className='match-badge fail';$('card4Note').textContent='검사 실패: '+e.message;}
  finally{$('card4TestBtn').disabled=false;}
 }
 $('card4TestBtn').addEventListener('click',runCard4Test);
