@@ -113,7 +113,8 @@ async function runCard4Test(){
   }
   // record_id는 합성 signal_id + KST 날짜로 고정한다.
   const ok=rows.map(x=>x.after).join(',')==='1,1,1,2'&&synthetic[0].normalized_value===110&&synthetic[1].normalized_value===120&&synthetic[0].record_id===a.payload.signal_id+'|2026-08-24';
-  output.textContent=JSON.stringify({result:ok?'PASS':'FAIL',timezone:'Asia/Seoul',sequence:rows,final_rows:synthetic.map(({record_id,record_date,normalized_value})=>({record_id,record_date,normalized_value})),note:'합성 전용. 실제 날씨 기록에 저장하지 않음.'},null,2);
+  const before=rows[1].before,after=rows[1].after;
+  output.textContent=`같은 날 재실행 전후 행 수\n재실행 전: ${before}건\n재실행 후: ${after}건`;
  }catch(e){output.textContent='검사 실패: '+e.message;}
  finally{$('card4TestBtn').disabled=false;}
 }
