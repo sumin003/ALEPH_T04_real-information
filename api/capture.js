@@ -23,7 +23,7 @@ module.exports=async function handler(req,res){
   const fetchedAt=new Date().toISOString();
   const reading={signal_id:SIGNAL,record_date:dateKST(fetchedAt),source_url:SOURCE_URL,source_observed_at:raw.current.time+'+09:00',normalized_value:raw.current.temperature_2m,unit:'°C',fetched_at:fetchedAt};
   const url=`${base.replace(/\/$/,'')}/rest/v1/weather_daily?on_conflict=signal_id,record_date`;
-  const saved=await fetch(url,{method:'POST',headers:{apikey:key,Authorization:`Bearer ${key}`,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(reading),signal:AbortSignal.timeout(10000)});
+  const saved=await fetch(url,{method:'POST',headers:{apikey:key,'Content-Type':'application/json',Prefer:'resolution=merge-duplicates,return=representation'},body:JSON.stringify(reading),signal:AbortSignal.timeout(10000)});
   if(!saved.ok)throw Error('storage_http_'+saved.status);
   const rows=await saved.json();const stored=rows[0];
   if(!stored||stored.record_date!==reading.record_date||stored.normalized_value!==reading.normalized_value||stored.unit!==reading.unit)throw Error('storage_mismatch');
