@@ -1,0 +1,25 @@
+{
+  "test": "T04-C20-C21",
+  "data_type": "real",
+  "source": "Open-Meteo",
+  "storage": "Supabase",
+  "timezone": "Asia/Seoul",
+  "day_1": {
+    "date": "2026-10-12",
+    "expected_runs": 3,
+    "expected_rows": 1,
+    "verified_run_count": null,
+    "rows_before_rerun": null,
+    "rows_after_rerun": null,
+    "status": "pending_verification"
+  },
+  "day_2": {
+    "date": "2026-10-13",
+    "expected_runs": 1,
+    "expected_total_rows": 2,
+    "verified_run_count": null,
+    "status": "pending"
+  },
+  "result": "PENDING",
+  "note": "실제 API 조회 및 저장 전후 행 수 검증이 완료되지 않았습니다. node tests/daily-storage.test.js 로 실제 저장 상태를 조회할 수 있지만, 3회 실행 증빙은 별도로 필요합니다."
+}
