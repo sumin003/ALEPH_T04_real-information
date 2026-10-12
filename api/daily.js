@@ -7,7 +7,7 @@ module.exports=async function handler(req,res){
  if(req.method!=='GET'){res.setHeader('Allow','GET');return res.status(405).json({error:'method_not_allowed'});}
  const base=process.env.SUPABASE_URL,key=process.env.SUPABASE_SECRET_KEY;
  if(!base||!key)return res.status(503).json({error:'storage_not_configured'});
- const headers={apikey:key,Authorization:`Bearer ${key}`};
+ const headers={apikey:key};
  const table=`${base.replace(/\/$/,'')}/rest/v1/weather_daily`;
  try{
   // GET is read-only: a public visitor cannot create or overwrite a daily record.
