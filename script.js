@@ -91,35 +91,3 @@ async function recoverySequence(){resetReplay();await runReplay('normalA');await
 let running=false;async function guard(fn){if(running)return;running=true;document.querySelectorAll('.lab button').forEach(b=>b.disabled=true);try{await fn();}finally{running=false;document.querySelectorAll('.lab button').forEach(b=>b.disabled=false);}}
 document.querySelectorAll('[data-scenario]').forEach(button=>button.addEventListener('click',()=>guard(async()=>{const key=button.dataset.scenario;if(['normalA','normalB'].includes(key))await runReplay(key);else await failureSequence(key);})));$('recoverBtn').addEventListener('click',()=>guard(async()=>{await recoverySequence();await runReplay('recover');}));$('labRetry').addEventListener('click',()=>guard(async()=>await runReplay('recover')));
 resetReplay();
-
-// 카드 4: 공식 합성 시계로 같은 KST 날짜 3회, 다음 날짜 1회 검증.
-// 합성 상태는 실제 Open-Meteo 일별 저장소와 절대로 섞이지 않는다.
-async function runCard4Test(){
- const output=$('card4TestResult');$('card4TestBtn').disabled=true;
- try{
-  const a=await getFixture('normalA'),b=await getFixture('normalB'),d=await getFixture('normalD2');
-  const third=structuredClone(b);
-  third.fixture_id='CARD4-SYNTHETIC-D1-C';
-  third.payload.normalized_value=110;
-  third.expected={...b.expected,stored_value:110};
-  const sequence=[a,b,third,d],rows=[];
-  let synthetic=[];
-  for(const f of sequence){
-   validReading(f.payload);
-   const before=synthetic.length;
-   synthetic=upsertDaily(synthetic,{signal_id:f.payload.signal_id,record_date:replayDate(f.virtual_now),normalized_value:f.payload.normalized_value,unit:f.payload.unit,reading:f.payload});
-   const after=synthetic.length;
-   rows.push({fixture:f.fixture_id,date:replayDate(f.virtual_now),before,after,value:f.payload.normalized_value});
-  }
-  // record_id는 합성 signal_id + KST 날짜로 고정한다.
-  const ok=rows.map(x=>x.after).join(',')==='1,1,1,2'&&synthetic[0].normalized_value===110&&synthetic[1].normalized_value===120&&synthetic[0].record_id===a.payload.signal_id+'|2026-08-24';
-  const before=rows[1].before,after=rows[1].after;
-  $('card4Before').textContent=before+'건';
-  $('card4After').textContent=after+'건';
-  $('card4Badge').textContent=ok?'✓ 행 수 일치':'⚠ 검사 불일치';
-  $('card4Badge').className='match-badge '+(ok?'success':'fail');
-  $('card4Note').textContent=ok?'같은 날 재실행해도 행 수가 증가하지 않습니다.':'합성 날짜 검사 조건을 확인하세요.';
- }catch(e){$('card4Badge').textContent='⚠ 검사 실패';$('card4Badge').className='match-badge fail';$('card4Note').textContent='검사 실패: '+e.message;}
- finally{$('card4TestBtn').disabled=false;}
-}
-$('card4TestBtn').addEventListener('click',runCard4Test);
